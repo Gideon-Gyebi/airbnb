@@ -1,0 +1,74 @@
+BaseModel
+
+# This file defines the BaseModel class.
+
+"""Defines the BaseModel class."""
+
+# Import the models module and the uuid and datetime modules.
+import models
+from uuid import uuid4
+from datetime import datetime
+
+# Define the BaseModel class.
+class BaseModel:
+
+    """Represents the BaseModel of the HBnB project."""
+
+    # The __init__() method initializes a new BaseModel instance.
+    def __init__(self, *args, **kwargs):
+        """Initialize a new BaseModel.
+
+        Args:
+            *args (any): Unused.
+            **kwargs (dict): Key/value pairs of attributes.
+        """
+        # Set the id attribute to a unique string.
+        tform = "%Y-%m-%dT%H:%M:%S.%f"
+        self.id = str(uuid4())
+        # Set the created_at attribute to the current date and time.
+        self.created_at = datetime.today()
+        # Set the updated_at attribute to the current date and time.
+        self.updated_at = datetime.today()
+        # If kwargs is not empty, iterate over the key/value pairs and set the
+        # attribute values. If the key is "created_at" or "updated_at", convert
+        # the value to a datetime object using the strptime() method. Otherwise,
+        # simply set the value.
+        if len(kwargs) != 0:
+            for k, v in kwargs.items():
+                if k == "created_at" or k == "updated_at":
+                    self.__dict__[k] = datetime.strptime(v, tform)
+                else:
+                    self.__dict__[k] = v
+        # Otherwise, add the instance to the storage.
+        else:
+            models.storage.new(self)
+
+    # The save() method updates the updated_at attribute with the current date
+    # and time and saves the instance.
+    def save(self):
+        """Update updated_at with the current datetime and save the instance."""
+        self.updated_at = datetime.today()
+        models.storage.save()
+
+    # The to_dict() method returns a dictionary representation of the BaseModel
+    # instance. The dictionary includes the key/value pairs for all attributes,
+    # as well as a key/value pair for __class__ representing the class name
+    # of the object.
+    def to_dict(self):
+        """Return the dictionary of the BaseModel instance.
+
+        Includes the key/value pair __class__ representing
+        the class name of the object.
+        """
+        rdict = self.__dict__.copy()
+        rdict["created_at"] = self.created_at.isoformat()
+        rdict["updated_at"] = self.updated_at.isoformat()
+        rdict["__class__"] = self.__class__.__name__
+        return rdict
+
+    # The __str__() method returns the print/str representation of the
+    # BaseModel instance.
+    def __str__(self):
+        """Return the print/str representation of the BaseModel instance."""
+        clname = self.__class__.__name__
+        return "[{}] ({}) {}".format(clname, self.id, self.__dict__)
