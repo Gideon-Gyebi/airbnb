@@ -8,7 +8,7 @@ class BaseModel:
     """This is representing the BaseModel of the hbnb project"""
 
     # The __init__() method initializes a new BaseModel instance
-    def __init__(self, *args, **kvargs):
+    def __init__(self, *args, **kwargs):
         """Initialize a new BaseModel.
 
         Args:
